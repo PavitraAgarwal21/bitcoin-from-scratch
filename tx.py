@@ -220,10 +220,10 @@ class Tx:
         s += int_to_little_endian(SIGHASH_ALL, 4) # assuming that all is signed 
         return int.from_bytes(hash256(s), 'big')
     
-    def verify_input(self, input_index): # verify the transaction input signature by using the signature techniques 
+    def verify_input(self, input_index): 
         
         tx_in = self.tx_ins[input_index]
-        script_pubkey = tx_in.script_pubkey() # this script_pubkey calls return prevout.script_pubkey 
+        script_pubkey = tx_in.script_pubkey() 
         
         if script_pubkey.is_p2sh_script_pubkey():
             cmd = tx_in.script_sig.cmds[-1]
@@ -259,7 +259,7 @@ class Tx:
         return combined.evaluate(z, witness)
     
 
-    def verify(self): # verify each of the script_sig in the each input vin 
+    def verify(self): 
         for i in range(len(self.tx_ins)):
             if not self.verify_input(i):
                 return False
