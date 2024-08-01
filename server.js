@@ -7,6 +7,8 @@ const path = require('path');
 const cors = require('cors');
 const fsExtra = require('fs-extra');
 const app = express();
+const { exec } = require('child_process');
+
 const PORT = 3001;
 
 app.use(cors());
@@ -55,6 +57,20 @@ app.post('/api/selected-files', (req, res) => {
     });
 
     console.log('Files copied successfully:', files);
+    const scriptPath = path.join(__dirname, 'run.sh');
+    exec(`bash ${scriptPath}`, (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error executing script: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.error(`Script error output: ${stderr}`);
+            return;
+        }
+        console.log(`Script output:\n${stdout}`);
+    });
+
+    
     res.send({ message: 'Files copied successfully' });
 });
 

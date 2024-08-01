@@ -106,7 +106,7 @@ def initializeTxn(txex , segwitness) :
 
 
 script_directory = os.path.dirname(os.path.abspath(__file__))
-directory =  os.path.join(script_directory, "checkpool")
+directory =  os.path.join(script_directory, "selected-files")
 for filename in os.listdir(directory):
   if filename.endswith('.json'):
         filepath = os.path.join(directory, filename)
