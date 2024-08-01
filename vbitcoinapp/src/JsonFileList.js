@@ -57,7 +57,7 @@ const JsonFileList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedFiles, setSelectedFiles] = useState([]);
-
+    const [outputData, setOutputData] = useState('');
     useEffect(() => {
         const fetchJsonFiles = async () => {
             try {
@@ -88,25 +88,27 @@ const JsonFileList = () => {
         setSelectedFiles((prevSelectedFiles) => [...prevSelectedFiles, fileName]);
     };
 
-    // const sendSelectedFiles = async () => {
-    //     const data = 5 ; 
-    //     try {
-    //     const res = await fetch('http://localhost:3001/api/selected-files', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({ data }),
-    //     });
 
-    //     const result = await res.json();
-    //     // setResponse(result.message);
-    // } catch (error) {
-    //     console.error('Error sending data:', error);
-    //     // setResponse('Error sending data');
-    // }
+   
+
+    const fetchOutputData = async () => {
+        setLoading(true);
+        setError('');
         
-    // }
+        try {
+            const response = await fetch('http://localhost:3001/api/output');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.text();
+            setOutputData(data);
+        } catch (error) {
+            console.error('Error fetching output data:', error);
+            setError('Failed to fetch data');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const sendSelectedFiles = async () => {
         try {
@@ -165,6 +167,14 @@ const JsonFileList = () => {
                     <Button onClick={sendSelectedFiles}>Send to Server</Button>
                 </div>
             )}
+
+<div>
+            <h1>Output from output.txt</h1>
+            <button onClick={fetchOutputData}>Fetch Output Data</button>
+            {loading && <p>Loading...</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <pre>{outputData}</pre> {/* Use <pre> for preformatted text */}
+        </div>
         </Container>
     );
 };

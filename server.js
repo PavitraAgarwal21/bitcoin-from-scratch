@@ -70,12 +70,22 @@ app.post('/api/selected-files', (req, res) => {
         console.log(`Script output:\n${stdout}`);
     });
 
-    
+
     res.send({ message: 'Files copied successfully' });
 });
 
 
-
+app.get('/api/output', (req, res) => {
+    const outputFilePath = path.join(__dirname, 'output.txt');
+    
+    fs.readFile(outputFilePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading output.txt:', err);
+            return res.status(500).send('Error reading file');
+        }
+        res.send(data);
+    });
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
