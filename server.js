@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
-
+const fsExtra = require('fs-extra');
 const app = express();
 const PORT = 3001;
 
@@ -27,10 +27,37 @@ app.get('/api/json-files', (req, res) => {
 
 
 app.post('/api/selected-files', (req, res) => {
-    const  data  = req.body.files ; 
-    console.log('Received data:', data);
-    res.send({ message: 'Data received successfully' });
+    const { files } = req.body;
+    const scriptDirectory = __dirname;
+    const checkpoolDirectory = path.join(scriptDirectory, 'checkpool');
+    const selectedFilesDirectory = path.join(scriptDirectory, 'selected-files');
+
+    // Create selected-files directory if it doesn't exist
+    if (!fs.existsSync(selectedFilesDirectory)) {
+        fs.mkdirSync(selectedFilesDirectory);
+    }
+
+    files.forEach(file => {
+        const sourceFile = path.join(checkpoolDirectory, file);
+        const destinationFile = path.join(selectedFilesDirectory, file);
+
+        // Check if the source file exists
+        if (fs.existsSync(sourceFile)) {
+            // Check if the file already exists in the destination
+            if (!fs.existsSync(destinationFile)) {
+                fsExtra.copySync(sourceFile, destinationFile);
+            } else {
+                console.log(`File already exists: ${file}`);
+            }
+        } else {
+            console.log(`Source file does not exist: ${file}`);
+        }
+    });
+
+    console.log('Files copied successfully:', files);
+    res.send({ message: 'Files copied successfully' });
 });
+
 
 
 
