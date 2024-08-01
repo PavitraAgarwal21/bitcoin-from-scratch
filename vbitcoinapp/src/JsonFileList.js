@@ -1,10 +1,62 @@
-// src/JsonFileList.js
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+const Container = styled.div`
+    padding: 20px;
+`;
+
+const Title = styled.h2`
+    text-align: center;
+`;
+
+const FileList = styled.ul`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    list-style-type: none;
+    padding: 0;
+`;
+
+const FileItem = styled.li`
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    width: calc(33.333% - 20px);
+    box-sizing: border-box;
+    text-align: center;
+`;
+
+const Button = styled.button`
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+`;
+
+const Loading = styled.div`
+    text-align: center;
+    margin-top: 20px;
+`;
+
+const Error = styled.div`
+    color: red;
+    text-align: center;
+    margin-top: 20px;
+`;
 
 const JsonFileList = () => {
     const [jsonFiles, setJsonFiles] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
     useEffect(() => {
         const fetchJsonFiles = async () => {
@@ -18,6 +70,7 @@ const JsonFileList = () => {
                 }
 
                 const data = await response.json();
+
                 console.log("Fetched data:", data);
                 setJsonFiles(data);
             } catch (error) {
@@ -31,27 +84,88 @@ const JsonFileList = () => {
         fetchJsonFiles();
     }, []);
 
+    const handleSelectFile = (fileName) => {
+        setSelectedFiles((prevSelectedFiles) => [...prevSelectedFiles, fileName]);
+    };
+
+    // const sendSelectedFiles = async () => {
+    //     const data = 5 ; 
+    //     try {
+    //     const res = await fetch('http://localhost:3001/api/selected-files', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify({ data }),
+    //     });
+
+    //     const result = await res.json();
+    //     // setResponse(result.message);
+    // } catch (error) {
+    //     console.error('Error sending data:', error);
+    //     // setResponse('Error sending data');
+    // }
+        
+    // }
+
+    const sendSelectedFiles = async () => {
+        try {
+            const response = await fetch('http://localhost:3001/api/selected-files', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ files: selectedFiles }),
+            });
+    
+            console.log('Response status:', response.body);
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const result = await response.json();
+            console.log('Server response:', result);
+        } catch (error) {
+            console.error('Error sending selected files:', error.message);
+        }
+    };
+
     if (loading) {
-        return <div>Loading...</div>;
+        return <Loading>Loading...</Loading>;
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <Error>Error: {error}</Error>;
     }
 
     return (
-        <div>
-            <h2>JSON Files in Checkpool</h2>
-            <ul>
+        <Container>
+            <Title>JSON Files in Checkpool</Title>
+            <FileList>
                 {jsonFiles.length > 0 ? (
                     jsonFiles.map((file, index) => (
-                        <li key={index}>{file}</li>
+                        <FileItem key={index}>
+                            {file}
+                            <Button onClick={() => handleSelectFile(file)}>Select</Button>
+                        </FileItem>
                     ))
                 ) : (
-                    <li>No JSON files found.</li>
+                    <FileItem>No JSON files found.</FileItem>
                 )}
-            </ul>
-        </div>
+            </FileList>
+            {selectedFiles.length > 0 && (
+                <div>
+                    <h3>Selected Files:</h3>
+                    <ul>
+                        {selectedFiles.map((file, index) => (
+                            <li key={index}>{file}</li>
+                        ))}
+                    </ul>
+                    <Button onClick={sendSelectedFiles}>Send to Server</Button>
+                </div>
+            )}
+        </Container>
     );
 };
 
