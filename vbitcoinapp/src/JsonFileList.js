@@ -99,14 +99,16 @@ const JsonFileList = () => {
     if (error) {
         return <div className="text-center mt-20 text-red-600">Error: {error}</div>;
     }
+
     return (
         <div className="bg-black text-white min-h-screen p-5">
-<h2 className="text-6xl font-extrabold text-yellow-500 text-center mb-5 relative">
-    <span className="relative inline-block">
-        <span className="absolute inset-0 bg-gradient-to-r from-red-500 to-purple-800 rounded-lg transform -skew-y-2"></span>
-        <span className="relative text-shadow-lg">BITCOIN MINING SIMULATOR</span>
-    </span>
-</h2>            <ul className="list-none p-0">
+            <h2 className="text-6xl font-extrabold text-yellow-500 text-center mb-5 relative">
+                <span className="relative inline-block">
+                    <span className="absolute inset-0 bg-gradient-to-r from-red-500 to-purple-800 rounded-lg transform -skew-y-2"></span>
+                    <span className="relative text-shadow-lg">BITCOIN MINING SIMULATOR</span>
+                </span>
+            </h2>
+            <ul className="list-none p-0">
                 {jsonFiles.length > 0 ? (
                     jsonFiles.map(({ fileName, content }, index) => (
                         <li key={index} className="bg-gray-800 border border-yellow-500 rounded-lg p-5 w-full mb-4 flex flex-col transition duration-300 hover:bg-gray-700">
@@ -137,36 +139,38 @@ const JsonFileList = () => {
                     <li className="bg-gray-800 border border-yellow-500 rounded-lg p-5 w-full text-center">No JSON files found.</li>
                 )}
             </ul>
+
             {selectedFiles.length > 0 && (
-                <div className="mt-5">
-                    <h3 className="text-xl font-semibold">Selected Files:</h3>
-                    <ul className="list-disc ml-5">
+                <div className="mt-5 p-4 bg-gray-800 border border-yellow-500 rounded-lg">
+                    <h3 className="text-2xl font-semibold mb-3">Selected Files</h3>
+                    <ul className="list-disc ml-5 space-y-1">
                         {selectedFiles.map((file, index) => (
-                            <li key={index}>{file}</li>
+                            <li key={index} className="text-yellow-400">{file}</li>
                         ))}
                     </ul>
                     <button
-                        className="mt-2 px-4 py-2 bg-yellow-500 text-black rounded hover:bg-yellow-400 transition duration-300"
+                        className="mt-4 px-4 py-2 bg-yellow-500 text-black rounded-lg hover:bg-yellow-400 transition duration-300"
                         onClick={sendSelectedFiles}
                     >
                         Send to Server
                     </button>
                 </div>
             )}
-    
+
             <div className="mt-10">
                 <h1 className="text-2xl font-semibold mb-3">Output from output.txt</h1>
                 <button
-                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500 transition duration-300"
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 transition duration-300"
                     onClick={fetchOutputData}
                 >
                     Fetch Output Data
                 </button>
                 {loading && <p className="text-center mt-2">Loading...</p>}
                 {error && <p className="text-red-600 mt-2">{error}</p>}
-                <pre className="bg-gray-900 border border-yellow-500 rounded p-4 mt-2">{outputData}</pre>
+                <pre className="bg-gray-900 border border-yellow-500 rounded-lg p-4 mt-2 whitespace-pre-wrap">{outputData}</pre>
             </div>
         </div>
     );
 }
-export default JsonFileList ;
+
+export default JsonFileList;
