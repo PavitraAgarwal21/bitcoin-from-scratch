@@ -14,15 +14,22 @@ const PORT = 3001;
 app.use(cors());
 app.use(bodyParser.json());
 
-// Endpoint to get JSON file names
 app.get('/api/json-files', (req, res) => {
     const directoryPath = path.join(__dirname, 'checkpool');
 
-    fs.readdir(directoryPath, (err, files) => {
+    fs.readdir(directoryPath, async (err, files) => {
         if (err) {
             return res.status(500).send('Unable to scan directory: ' + err);
         }
-        const jsonFiles = files.filter(file => path.extname(file) === '.json');
+
+        const jsonFiles = [];
+        for (const file of files) {
+            if (path.extname(file) === '.json') {
+                const filePath = path.join(directoryPath, file);
+                const content = await fs.promises.readFile(filePath, 'utf-8');
+                jsonFiles.push({ fileName: file, content }); // Send filename and content
+            }
+        }
         res.json(jsonFiles);
     });
 });
