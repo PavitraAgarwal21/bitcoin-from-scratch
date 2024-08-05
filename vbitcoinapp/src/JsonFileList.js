@@ -102,50 +102,21 @@ const JsonFileList = () => {
 
     return (
         <div className="bg-black text-white min-h-screen p-5">
-            <h2 className="text-6xl font-extrabold text-yellow-500 text-center mb-5 relative">
+            <h2 className="text-6xl font-extrabold text-yellow-500 text-center mb-10 relative">
                 <span className="relative inline-block">
                     <span className="absolute inset-0 bg-gradient-to-r from-red-500 to-purple-800 rounded-lg transform -skew-y-2"></span>
                     <span className="relative text-shadow-lg">BITCOIN MINING SIMULATOR</span>
                 </span>
             </h2>
-            <ul className="list-none p-0">
-                {jsonFiles.length > 0 ? (
-                    jsonFiles.map(({ fileName, content }, index) => (
-                        <li key={index} className="bg-gray-800 border border-yellow-500 rounded-lg p-5 w-full mb-4 flex flex-col transition duration-300 hover:bg-gray-700">
-                            <div className="flex items-center">
-                                <button
-                                    className="mr-2 flex items-center text-yellow-500 hover:text-yellow-300 px-4 py-2 border border-yellow-500 rounded-lg transition duration-300"
-                                    onClick={() => toggleDropdown(fileName)}
-                                >
-                                    <span className={`inline-block w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent ${dropdownVisible[fileName] ? 'border-b-4 border-b-yellow-500' : 'border-t-4 border-t-yellow-500'}`}></span>
-                                </button>
-                                <span className="flex-grow break-words">{fileName}</span>
-                                <input
-                                    type="checkbox"
-                                    className="form-checkbox h-5 w-5 text-yellow-400 ml-4"
-                                    checked={selectedFiles.includes(fileName)}
-                                    onChange={() => handleSelectFile(fileName)}
-                                />
-                            </div>
-                            
-                            {dropdownVisible[fileName] && (
-                                <div className="mt-2 p-2 border border-yellow-400 rounded bg-gray-700">
-                                    <pre>{content}</pre> {/* Displaying content directly */}
-                                </div>
-                            )}
-                        </li>
-                    ))
-                ) : (
-                    <li className="bg-gray-800 border border-yellow-500 rounded-lg p-5 w-full text-center">No JSON files found.</li>
-                )}
-            </ul>
 
             {selectedFiles.length > 0 && (
-                <div className="mt-5 p-4 bg-gray-800 border border-yellow-500 rounded-lg">
+                <div className="mt-5 p-4 bg-gray-800 border border-yellow-500 rounded-lg animate-fade-in">
                     <h3 className="text-2xl font-semibold mb-3">Selected Files</h3>
                     <ul className="list-disc ml-5 space-y-1">
                         {selectedFiles.map((file, index) => (
-                            <li key={index} className="text-yellow-400">{file}</li>
+                            <li key={index} className={`text-yellow-400 animate-slide-in ${index % 2 === 0 ? 'bg-gray-700' : 'bg-gray-600'} p-2 rounded`}>
+                                {file}
+                            </li>
                         ))}
                     </ul>
                     <button
@@ -169,6 +140,37 @@ const JsonFileList = () => {
                 {error && <p className="text-red-600 mt-2">{error}</p>}
                 <pre className="bg-gray-900 border border-yellow-500 rounded-lg p-4 mt-2 whitespace-pre-wrap">{outputData}</pre>
             </div>
+
+            <ul className="list-none p-0 mt-10">
+                {jsonFiles.length > 0 ? (
+                    jsonFiles.map(({ fileName, content }, index) => (
+                        <li key={index} className="bg-gray-800 border border-yellow-500 rounded-lg p-5 w-full mb-4 flex flex-col transition duration-300 hover:bg-gray-700 animate-slide-in">
+                            <div className="flex items-center">
+                                <button
+                                    className="mr-2 flex items-center text-yellow-500 hover:text-yellow-300 px-4 py-2 border border-yellow-500 rounded-lg transition duration-300"
+                                    onClick={() => toggleDropdown(fileName)}
+                                >
+                                    <span className={`inline-block w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent ${dropdownVisible[fileName] ? 'border-b-4 border-b-yellow-500' : 'border-t-4 border-t-yellow-500'}`}></span>
+                                </button>
+                                <span className="flex-grow break-words">{fileName}</span>
+                                <input
+                                    type="checkbox"
+                                    className="form-checkbox h-5 w-5 text-yellow-400 ml-4"
+                                    checked={selectedFiles.includes(fileName)}
+                                    onChange={() => handleSelectFile(fileName)}
+                                />
+                            </div>
+                            {dropdownVisible[fileName] && (
+                                <div className="mt-2 p-2 border border-yellow-400 rounded bg-gray-700">
+                                    <pre>{content}</pre>
+                                </div>
+                            )}
+                        </li>
+                    ))
+                ) : (
+                    <li className="bg-gray-800 border border-yellow-500 rounded-lg p-5 w-full text-center animate-fade-in">No JSON files found.</li>
+                )}
+            </ul>
         </div>
     );
 }
