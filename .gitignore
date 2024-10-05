@@ -1,5 +1,5 @@
 /vbitcoinapp/node_modules
 node_modules
-mempool 
+/mempool 
 selected-files
 checkpool
