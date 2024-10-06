@@ -82,11 +82,12 @@ def decode_num(element):
         return -result
     else:
         return result
-
+    
+# sha256 operation followed by the ripemd160 hash operation, the combination of which is called a hash160 operation.
 def hash160(s):
     return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()
 
-
+# double SHA256 operation 
 def hash256(s):
     return hashlib.sha256(hashlib.sha256(s).digest()).digest()
 
@@ -94,6 +95,8 @@ def hash256(s):
 def sha256(s):
     return hashlib.sha256(s).digest()
 
+
+# BIP 0173 Bech32 uses a 32-character alphabet that’s just numbers and lowercase letters, except 1, b, i, and o. Thus far, it’s only used for Segwit
 def encode_base58(s):
     # determine how many 0 bytes (b'\x00') s starts with
     count = 0
@@ -104,7 +107,7 @@ def encode_base58(s):
             break
     # convert to big endian integer
     num = int.from_bytes(s, 'big')
-    prefix = '1' * count
+    prefix = '1' * count 
     result = ''
     while num > 0:
         num, mod = divmod(num, 58)
@@ -112,6 +115,7 @@ def encode_base58(s):
     return prefix + result
 
 
+# getting the first 4 bytes as the checksum and adding it to the end of the base58 encoded string
 def encode_base58_checksum(s):
     return encode_base58(s + hash256(s)[:4])
 
