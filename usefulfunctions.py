@@ -1,59 +1,66 @@
 import hashlib
+
 SIGHASH_ALL = 1
 SIGHASH_NONE = 2
 SIGHASH_SINGLE = 3
-BASE58_ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+
+
 def little_endian_to_int(b):
-    return int.from_bytes(b, 'little')
+    return int.from_bytes(b, "little")
+
 
 def decode_base58(s):
     num = 0
     for c in s:
         num *= 58
         num += BASE58_ALPHABET.index(c)
-    combined = num.to_bytes(25, byteorder='big')
+    combined = num.to_bytes(25, byteorder="big")
     checksum = combined[-4:]
     if hash256(combined[:-4])[:4] != checksum:
-        raise ValueError('bad address: {} {}'.format(checksum, hash256(combined[:-4])[:4]))
+        raise ValueError(
+            "bad address: {} {}".format(checksum, hash256(combined[:-4])[:4])
+        )
     return combined[1:-4]
 
 
 def read_varint(s):
     i = s.read(1)[0]
-    if i == 0xfd:
+    if i == 0xFD:
         return little_endian_to_int(s.read(2))
-    elif i == 0xfe:
+    elif i == 0xFE:
         return little_endian_to_int(s.read(4))
-    elif i == 0xff:
+    elif i == 0xFF:
         return little_endian_to_int(s.read(8))
     else:
         # anything else is just the integer
         return i
 
-def int_to_little_endian(n, length): # converting the int into the little edian format 
-    return n.to_bytes(length, 'little') 
 
-# encode  a variant which can represent the number over their bytes represntation 
+def int_to_little_endian(n, length):  # converting the int into the little edian format
+    return n.to_bytes(length, "little")
+
+
+# encode  a variant which can represent the number over their bytes represntation
 def encode_varint(i):
-    if i < 0xfd:
+    if i < 0xFD:
         return bytes([i])
     elif i < 0x10000:
-        return b'\xfd' + int_to_little_endian(i, 2)
+        return b"\xfd" + int_to_little_endian(i, 2)
     elif i < 0x100000000:
-        return b'\xfe' + int_to_little_endian(i, 4)
+        return b"\xfe" + int_to_little_endian(i, 4)
     elif i < 0x10000000000000000:
-        return b'\xff' + int_to_little_endian(i, 8)
-
+        return b"\xff" + int_to_little_endian(i, 8)
 
 
 def encode_num(num):
     if num == 0:
-        return b''
+        return b""
     abs_num = abs(num)
     negative = num < 0
     result = bytearray()
     while abs_num:
-        result.append(abs_num & 0xff)
+        result.append(abs_num & 0xFF)
         abs_num >>= 8
     if result[-1] & 0x80:
         if negative:
@@ -66,12 +73,12 @@ def encode_num(num):
 
 
 def decode_num(element):
-    if element == b'':
+    if element == b"":
         return 0
     big_endian = element[::-1]
     if big_endian[0] & 0x80:
         negative = True
-        result = big_endian[0] & 0x7f
+        result = big_endian[0] & 0x7F
     else:
         negative = False
         result = big_endian[0]
@@ -82,12 +89,14 @@ def decode_num(element):
         return -result
     else:
         return result
-    
+
+
 # sha256 operation followed by the ripemd160 hash operation, the combination of which is called a hash160 operation.
 def hash160(s):
-    return hashlib.new('ripemd160', hashlib.sha256(s).digest()).digest()
+    return hashlib.new("ripemd160", hashlib.sha256(s).digest()).digest()
 
-# double SHA256 operation 
+
+# double SHA256 operation
 def hash256(s):
     return hashlib.sha256(hashlib.sha256(s).digest()).digest()
 
@@ -106,9 +115,9 @@ def encode_base58(s):
         else:
             break
     # convert to big endian integer
-    num = int.from_bytes(s, 'big')
-    prefix = '1' * count 
-    result = ''
+    num = int.from_bytes(s, "big")
+    prefix = "1" * count
+    result = ""
     while num > 0:
         num, mod = divmod(num, 58)
         result = BASE58_ALPHABET[mod] + result
@@ -125,21 +134,22 @@ def decode_base58(s):
     for c in s:
         num *= 58
         num += BASE58_ALPHABET.index(c)
-    combined = num.to_bytes(25, byteorder='big')
+    combined = num.to_bytes(25, byteorder="big")
     checksum = combined[-4:]
     if hash256(combined[:-4])[:4] != checksum:
-        raise ValueError('bad address: {} {}'.format(checksum, hash256(combined[:-4])[:4]))
+        raise ValueError(
+            "bad address: {} {}".format(checksum, hash256(combined[:-4])[:4])
+        )
     return combined[1:-4]
 
 
-
 def h160_to_p2pkh_address(h160):
-    prefix = b'\x00'
+    prefix = b"\x00"
     return encode_base58_checksum(prefix + h160)
 
 
 def h160_to_p2sh_address(h160):
-    prefix = b'\x05'
+    prefix = b"\x05"
     return encode_base58_checksum(prefix + h160)
 
 
@@ -149,7 +159,7 @@ def merkle_parent(hash1, hash2):
 
 def merkle_parent_level(hashes):
     if len(hashes) == 1:
-        raise RuntimeError('Cannot take a parent level with only 1 item')
+        raise RuntimeError("Cannot take a parent level with only 1 item")
     if len(hashes) % 2 == 1:
         hashes.append(hashes[-1])
     parent_level = []

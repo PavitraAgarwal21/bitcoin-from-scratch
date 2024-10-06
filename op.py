@@ -9,14 +9,15 @@ from usefulfunctions import (
     hash256,
 )
 
+
 def encodenum(num):
     if num == 0:
-        return b''
+        return b""
     absnum = abs(num)
     negative = num < 0
     result = bytearray()
     while absnum:
-        result.append(absnum & 0xff)
+        result.append(absnum & 0xFF)
         absnum >>= 8
     if result[-1] & 0x80:
         if negative:
@@ -29,13 +30,13 @@ def encodenum(num):
 
 
 def decodenum(element):
-    if element == b'':
+    if element == b"":
         return 0
     bigendian = element[::-1]
 
     if bigendian[0] & 0x80:
         negative = True
-        result = bigendian[0] & 0x7f
+        result = bigendian[0] & 0x7F
     else:
         negative = False
         result = bigendian[0]
@@ -51,6 +52,7 @@ def decodenum(element):
 def op0(stack):
     stack.append(encodenum(0))
     return True
+
 
 def op1negate(stack):
     stack.append(encodenum(-1))
@@ -602,7 +604,7 @@ def opripemd160(stack):
     if len(stack) < 1:
         return False
     element = stack.pop()
-    stack.append(hashlib.new('ripemd160', element).digest())
+    stack.append(hashlib.new("ripemd160", element).digest())
     return True
 
 
@@ -697,7 +699,7 @@ def opcheckmultisigverify(stack, z):
 
 
 def opchecklocktimeverify(stack, locktime, sequence):
-    if sequence == 0xffffffff:
+    if sequence == 0xFFFFFFFF:
         return False
     if len(stack) < 1:
         return False
@@ -726,7 +728,7 @@ def opchecksequenceverify(stack, version, sequence):
             return False
         elif element & (1 << 22) != sequence & (1 << 22):
             return False
-        elif element & 0xffff > sequence & 0xffff:
+        elif element & 0xFFFF > sequence & 0xFFFF:
             return False
     return True
 
@@ -819,94 +821,94 @@ OPCODEFUNCTIONS = {
 }
 
 OPCODENAMES = {
-    0: 'OP0',
-    76: 'OPPUSHDATA1',
-    77: 'OPPUSHDATA2',
-    78: 'OPPUSHDATA4',
-    79: 'OP1NEGATE',
-    81: 'OP1',
-    82: 'OP2',
-    83: 'OP3',
-    84: 'OP4',
-    85: 'OP5',
-    86: 'OP6',
-    87: 'OP7',
-    88: 'OP8',
-    89: 'OP9',
-    90: 'OP10',
-    91: 'OP11',
-    92: 'OP12',
-    93: 'OP13',
-    94: 'OP14',
-    95: 'OP15',
-    96: 'OP16',
-    97: 'OPNOP',
-    99: 'OPIF',
-    100: 'OPNOTIF',
-    103: 'OPELSE',
-    104: 'OPENDIF',
-    105: 'OPVERIFY',
-    106: 'OPRETURN',
-    107: 'OPTOALTSTACK',
-    108: 'OPFROMALTSTACK',
-    109: 'OP2DROP',
-    110: 'OP2DUP',
-    111: 'OP3DUP',
-    112: 'OP2OVER',
-    113: 'OP2ROT',
-    114: 'OP2SWAP',
-    115: 'OPIFDUP',
-    116: 'OPDEPTH',
-    117: 'OPDROP',
-    118: 'OPDUP',
-    119: 'OPNIP',
-    120: 'OPOVER',
-    121: 'OPPICK',
-    122: 'OPROLL',
-    123: 'OPROT',
-    124: 'OPSWAP',
-    125: 'OPTUCK',
-    130: 'OPSIZE',
-    135: 'OPEQUAL',
-    136: 'OPEQUALVERIFY',
-    139: 'OP1ADD',
-    140: 'OP1SUB',
-    143: 'OPNEGATE',
-    144: 'OPABS',
-    145: 'OPNOT',
-    146: 'OP0NOTEQUAL',
-    147: 'OPADD',
-    148: 'OPSUB',
-    154: 'OPBOOLAND',
-    155: 'OPBOOLOR',
-    156: 'OPNUMEQUAL',
-    157: 'OPNUMEQUALVERIFY',
-    158: 'OPNUMNOTEQUAL',
-    159: 'OPLESSTHAN',
-    160: 'OPGREATERTHAN',
-    161: 'OPLESSTHANOREQUAL',
-    162: 'OPGREATERTHANOREQUAL',
-    163: 'OPMIN',
-    164: 'OPMAX',
-    165: 'OPWITHIN',
-    166: 'OPRIPEMD160',
-    167: 'OPSHA1',
-    168: 'OPSHA256',
-    169: 'OPHASH160',
-    170: 'OPHASH256',
-    171: 'OPCODESEPARATOR',
-    172: 'OPCHECKSIG',
-    173: 'OPCHECKSIGVERIFY',
-    174: 'OPCHECKMULTISIG',
-    175: 'OPCHECKMULTISIGVERIFY',
-    176: 'OPNOP1',
-    177: 'OPCHECKLOCKTIMEVERIFY',
-    178: 'OPCHECKSEQUENCEVERIFY',
-    179: 'OPNOP4',
-    180: 'OPNOP5',
-    181: 'OPNOP6',
-    182: 'OPNOP7',
-    183: 'OPNOP8',
-    184: 'OPNOP9',
-    185: 'OPNOP10',
+    0: "OP0",
+    76: "OPPUSHDATA1",
+    77: "OPPUSHDATA2",
+    78: "OPPUSHDATA4",
+    79: "OP1NEGATE",
+    81: "OP1",
+    82: "OP2",
+    83: "OP3",
+    84: "OP4",
+    85: "OP5",
+    86: "OP6",
+    87: "OP7",
+    88: "OP8",
+    89: "OP9",
+    90: "OP10",
+    91: "OP11",
+    92: "OP12",
+    93: "OP13",
+    94: "OP14",
+    95: "OP15",
+    96: "OP16",
+    97: "OPNOP",
+    99: "OPIF",
+    100: "OPNOTIF",
+    103: "OPELSE",
+    104: "OPENDIF",
+    105: "OPVERIFY",
+    106: "OPRETURN",
+    107: "OPTOALTSTACK",
+    108: "OPFROMALTSTACK",
+    109: "OP2DROP",
+    110: "OP2DUP",
+    111: "OP3DUP",
+    112: "OP2OVER",
+    113: "OP2ROT",
+    114: "OP2SWAP",
+    115: "OPIFDUP",
+    116: "OPDEPTH",
+    117: "OPDROP",
+    118: "OPDUP",
+    119: "OPNIP",
+    120: "OPOVER",
+    121: "OPPICK",
+    122: "OPROLL",
+    123: "OPROT",
+    124: "OPSWAP",
+    125: "OPTUCK",
+    130: "OPSIZE",
+    135: "OPEQUAL",
+    136: "OPEQUALVERIFY",
+    139: "OP1ADD",
+    140: "OP1SUB",
+    143: "OPNEGATE",
+    144: "OPABS",
+    145: "OPNOT",
+    146: "OP0NOTEQUAL",
+    147: "OPADD",
+    148: "OPSUB",
+    154: "OPBOOLAND",
+    155: "OPBOOLOR",
+    156: "OPNUMEQUAL",
+    157: "OPNUMEQUALVERIFY",
+    158: "OPNUMNOTEQUAL",
+    159: "OPLESSTHAN",
+    160: "OPGREATERTHAN",
+    161: "OPLESSTHANOREQUAL",
+    162: "OPGREATERTHANOREQUAL",
+    163: "OPMIN",
+    164: "OPMAX",
+    165: "OPWITHIN",
+    166: "OPRIPEMD160",
+    167: "OPSHA1",
+    168: "OPSHA256",
+    169: "OPHASH160",
+    170: "OPHASH256",
+    171: "OPCODESEPARATOR",
+    172: "OPCHECKSIG",
+    173: "OPCHECKSIGVERIFY",
+    174: "OPCHECKMULTISIG",
+    175: "OPCHECKMULTISIGVERIFY",
+    176: "OPNOP1",
+    177: "OPCHECKLOCKTIMEVERIFY",
+    178: "OPCHECKSEQUENCEVERIFY",
+    179: "OPNOP4",
+    180: "OPNOP5",
+    181: "OPNOP6",
+    182: "OPNOP7",
+    183: "OPNOP8",
+    184: "OPNOP9",
+    185: "OPNOP10",
 }
