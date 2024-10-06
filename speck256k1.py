@@ -4,9 +4,12 @@ import hmac
 from io import BytesIO
 
 
-
+#some methods to do compuation on the Field elements 
 class FieldElement:
 
+# dev num 
+# prime range 
+# initialize the field element 
     def __init__(self, num, prime):
         if num >= prime or num < 0:
             error = 'Num {} not in field range 0 to {}'.format(
@@ -60,7 +63,9 @@ class FieldElement:
         return self.__class__(num=num, prime=self.prime)
 
 
-
+# curve have a form  y2 = x3 + ax + b,
+# where a and b are constants specific to the curve
+# Point class is used to represent a point on the curve
 class Point:
 
     def __init__(self, x, y, a, b):
@@ -71,9 +76,10 @@ class Point:
         if self.x is None and self.y is None:
             return
 
+# actucally on the curve 
         if self.y**2 != self.x**3 + a * x + b:
             raise ValueError('({}, {}) is not on the curve'.format(x, y))
-
+        
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y \
             and self.a == other.a and self.b == other.b
@@ -90,27 +96,47 @@ class Point:
         else:
             return 'Point({},{})_{}_{}'.format(self.x, self.y, self.a, self.b)
 
+
     def __add__(self, other):
         if self.a != other.a or self.b != other.b:
             raise TypeError('Points {}, {} are not on the same curve'.format(self, other))
-        if self.x is None:
+        # info self point is in infinity 
+        if self.x is None: 
             return other
+        # info other point is in infinity
         if other.x is None:
             return self
+        #vertical line 
+        # @return the point at infinity
         if self.x == other.x and self.y != other.y:
             return self.__class__(None, None, self.a, self.b)
+        
+        # dev cal the slope of the line , s
+        # s = (y2 – y1)/(x2 – x1)
+        # x3 =s2 –x1 –x2
+        # y3 = s(x1 – x3) – y1
+        
         if self.x != other.x:
             s = (other.y - self.y) / (other.x - self.x)
             x = s**2 - self.x - other.x
             y = s * (self.x - x) - self.y
             return self.__class__(x, y, self.a, self.b)
+        
+        # P1 = P2 and also the vertical line 
+        # return the point at infinity
         if self == other and self.y == 0 * self.x:
             return self.__class__(None, None, self.a, self.b)
+        # P1 = P2 , tangent line 
+        # slope s = (3 * x1^2 + a) / (2 * y1)
+        # x3 = s^2 – 2 * x1
+        # y3 = s * (x1 – x3) – y1
+        # return P3
         if self == other:
             s = (3 * self.x**2 + self.a) / (2 * self.y)
             x = s**2 - 2 * self.x
             y = s * (self.x - x) - self.y
             return self.__class__(x, y, self.a, self.b)
+
 
     def __rmul__(self, coefficient):
         coef = coefficient
@@ -123,12 +149,18 @@ class Point:
             coef >>= 1
         return result
 
+
+
+# upper are the general cure and their fundamentals methods 
+# specfic curve for bitcoin 
+# a = 0, b = 7, making the equation y2 = x3 + 7
+
 A = 0
 B = 7
 P = 2**256 - 2**32 - 977
 N = 0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141
 
-
+# defined the field element for P = 2**256 - 2**32 - 977
 class S256Field(FieldElement):
 
     def __init__(self, num, prime=None):
@@ -139,6 +171,13 @@ class S256Field(FieldElement):
 
     def sqrt(self):
         return self**((P + 1) // 4)
+
+
+# Public key cryptogrpahy operations 
+# P = eG, in which we can easily generate a P if we know e and G but cannot  but we cannot easily compute e when we know P and G
+# e the provate key and Public key 
+# private key is a 256 number and Public key P is a point on the curve (x,y) where x, y is 256 bits number . 
+
 
 class S256Point(Point):
 
@@ -158,14 +197,25 @@ class S256Point(Point):
     def __rmul__(self, coefficient):
         coef = coefficient % N
         return super().__rmul__(coef)
-
+    
+# Note that we use Fermat’s little theorem for 1/s, since n is prime.
+# u=z/s , v=r/s.
     def verify(self, z, sig):
+        # little fermat theorem 
         s_inv = pow(sig.s, N - 2, N)
         u = z * s_inv % N
         v = sig.r * s_inv % N
         total = u * G + v * self
         return total.x.num == sig.r
 
+# uncompressed SEC format for a given point P = (x,y) is generated:
+# - Start with the prefix byte, which is 0x04.
+# - Append the x coordinate in 32 bytes as a big-endian integer.
+# - Append the y coordinate in 32 bytes as a big-endian integer.
+
+#compressed SEC format for a given point P = (x,y) is generated:
+# -  02 if y is even and 03 if Y is odd  . 
+# - Append the x coordinate in 32 bytes as a big-endian integer.
     def sec(self, compressed=True):
         if compressed:
             if self.y.num % 2 == 0:
@@ -213,9 +263,19 @@ class S256Point(Point):
             return S256Point(x, odd_beta)
 
 
+
 G = S256Point(
     0x79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798,
     0x483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8)
+
+
+# DER signature format is defined like this:
+# 1. Start with the 0x30 byte.
+# 2. Encode the length of the rest of the signature (usually 0x44 or 0x45) and append.
+# 3. Append the marker byte, 0x02.
+# 4. Encode r as a big-endian integer, but prepend it with the 0x00 byte if r’s first byte ≥ 0x80. Prepend the resulting length to r. Add this to the result.
+# 5. Append the marker byte, 0x02.
+# 6. Encode s as a big-endian integer, but prepend with the 0x00 byte if s’s first byte ≥ 0x80. Prepend the resulting length to s. Add this to the result.
 
 class Signature:
 
