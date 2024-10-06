@@ -32,14 +32,14 @@ The difficulty target is `0000ffff0000000000000000000000000000000000000000000000
 - A `run.sh` file is Create that contains the command to execute your script. This file contain a single command which run the all the needed file to run the mining alogrithim without anyother manulally interaction  .
 
 
-# Solution
+<!-- # Solution
 - **Design Approach:** Describe the approach you took to design your block construction program, explain all the key concepts of creating a valid block.
 
 - **Implementation Details:** Provide pseudo code of your implementation, including sequence of logic, algorithms and variables used etc.
 
 - **Results and Performance:** Present the results of your solution, and analyze the efficiency of your solution.
 
-- **Conclusion:** Discuss any insights gained from solving the problem, and outline potential areas for future improvement or research. Include a list of references or resources consulted during the problem-solving process.
+- **Conclusion:** Discuss any insights gained from solving the problem, and outline potential areas for future improvement or research. Include a list of references or resources consulted during the problem-solving process. -->
 
 # WHAT I DONT DO : 
 
