@@ -1,4 +1,4 @@
-# Summer of Bitcoin 2024: Mine your first block
+# Mine your first block
 
 ## Overview
 the simulation of mining process of a block, which includes validating and including transactions from a given set of transactions.
@@ -46,8 +46,8 @@ The difficulty target is `0000ffff0000000000000000000000000000000000000000000000
 - **Do Not Use Bitcoin Libraries for Transaction Validation:** You must not use any Bitcoin-specific libraries or frameworks that automate transaction validation processes. The intent of this challenge is for you to understand and implement the validation logic manually.
   
 - **Permissible Libraries:** The use of standard cryptographic libraries, such as secp256k1 for elliptic curve cryptography, and standard hashing libraries (e.g., for SHA-256) is allowed and encouraged. These libraries are essential for implementing the cryptographic underpinnings of bitcoin without reinventing the wheel.
-- 
- - **Implement the Mining Algorithm :**  To implement the mining algorithm on my own. in which creating a way to correctly form a block header, calculate the hash, and meet the challenge of finding a hash below a certain target.
+
+- **Implement the Mining Algorithm :**  To implement the mining algorithm on my own. in which creating a way to correctly form a block header, calculate the hash, and meet the challenge of finding a hash below a certain target.
 
 
 
