@@ -50,9 +50,3 @@ The difficulty target is `0000ffff0000000000000000000000000000000000000000000000
 - **Implement the Mining Algorithm :**  To implement the mining algorithm on my own. in which creating a way to correctly form a block header, calculate the hash, and meet the challenge of finding a hash below a certain target.
 
 
-
-## Why These Restrictions?
-These restrictions are designed to deepen your understanding of bitcoin technicals.
-By completing this assignment, you will gain hands-on experience with the technology that make bitcoin secure and trustless.
-Remember, the goal is not just to produce a working solution but to engage critically with the fundamental components of bitcoin.
-
